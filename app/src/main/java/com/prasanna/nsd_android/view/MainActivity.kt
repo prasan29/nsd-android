@@ -10,12 +10,12 @@ import com.prasanna.nsd_android.databinding.ActivityMainBinding
 import com.prasanna.nsd_android.viewmodel.MainViewModel
 
 class MainActivity : AppCompatActivity() {
-    var mBinding: ActivityMainBinding? = null
+    private var mBinding: ActivityMainBinding? = null
+    val contextProvider: () -> Context = { this }
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         mBinding = DataBindingUtil.setContentView(this, R.layout.activity_main)
         mBinding!!.lifecycleOwner = this
-        val contextProvider: () -> Context = { this }
         val lifecycleProvider: () -> LifecycleOwner = { this }
         mBinding!!.viewModel = MainViewModel(contextProvider, lifecycleProvider)
     }

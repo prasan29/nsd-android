@@ -25,12 +25,11 @@ public class NSDOperation {
 		mListener = listener;
 		mNsdManager =
 				(NsdManager) context.getSystemService(Context.NSD_SERVICE);
-		mRegistrationListener = new RegistrationListener(context);
 		//		mDiscoverListener = new DiscoverListener();
 	}
 
-	public void initiateProcess() {
-		registerService(getServerSocketPort());
+	public void initiateProcess(Context context) {
+		registerService(getServerSocketPort(), context);
 	}
 
 	public int getServerSocketPort() {
@@ -42,7 +41,7 @@ public class NSDOperation {
 		}
 	}
 
-	public void registerService(int port) {
+	public void registerService(int port, Context context) {
 		try {
 			NsdServiceInfo serviceInfo = new NsdServiceInfo();
 			serviceInfo.setServiceName(SERVICE_NAME);
@@ -51,6 +50,7 @@ public class NSDOperation {
 			serviceInfo.setPort(port);
 
 			Log.e(TAG, serviceInfo.toString());
+			mRegistrationListener = new RegistrationListener(context);
 
 			mNsdManager.registerService(serviceInfo, NsdManager.PROTOCOL_DNS_SD,
 			                            mRegistrationListener);
@@ -96,10 +96,8 @@ public class NSDOperation {
 
 		@Override
 		public void onServiceRegistered(NsdServiceInfo nsdServiceInfo) {
-			Toast.makeText(mContext, "onServiceRegistered: " +
-			                         nsdServiceInfo.getServiceName() + " " +
-			                         nsdServiceInfo.getServiceType() + " " +
-			                         nsdServiceInfo.getHost(),
+			Toast.makeText(mContext, "Published service: " +
+			                         nsdServiceInfo.getServiceName(),
 			               Toast.LENGTH_LONG).show();
 			mListener.onResult(nsdServiceInfo);
 		}
@@ -138,23 +136,6 @@ public class NSDOperation {
 		public void onServiceFound(NsdServiceInfo serviceInfo) {
 			Log.d(TAG, "Service: " + serviceInfo.toString());
 			mListener.onDiscoveryResult(serviceInfo);
-			if (serviceInfo.getServiceName().contains(SERVICE_NAME)) {
-				mNsdManager.resolveService(serviceInfo,
-				                           new NsdManager.ResolveListener() {
-					                           @Override
-					                           public void onResolveFailed(
-							                           NsdServiceInfo serviceInfo,
-							                           int errorCode) {
-
-					                           }
-
-					                           @Override
-					                           public void onServiceResolved(
-							                           NsdServiceInfo serviceInfo) {
-
-					                           }
-				                           });
-			}
 		}
 
 		@Override

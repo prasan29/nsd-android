@@ -7,6 +7,7 @@ import androidx.lifecycle.MutableLiveData
 object NSDHelper : OnResultChanged {
     private var mResult: MutableLiveData<String> = MutableLiveData()
     private var mScanningResult: MutableLiveData<String> = MutableLiveData()
+    private lateinit var contextProvider: () -> Context
 
     private lateinit var mNSDOperation: NSDOperation
 
@@ -16,7 +17,7 @@ object NSDHelper : OnResultChanged {
 
     fun initiateNSD(result: MutableLiveData<String>) {
         mResult = result
-        mNSDOperation.initiateProcess()
+        mNSDOperation.initiateProcess(contextProvider())
     }
 
     fun unRegisterNSD() {
