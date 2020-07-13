@@ -22,7 +22,7 @@
             android:layout_margin="12dp"
             android:onClick="@{() -> viewModel.onPublishClicked()}"
             android:padding="12dp"
-            android:text="@string/publish" />
+            android:text="@{(viewModel.publishButtonValue == true) ? @string/publish : @string/unpublish}" />
 
         <androidx.appcompat.widget.AppCompatButton
             android:layout_width="wrap_content"
@@ -35,7 +35,13 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_margin="12dp"
-            android:text="@{viewModel.result}" />
+            android:text="@{viewModel.result}"
+            android:textStyle="bold" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Scanned result: " />
 
     </LinearLayout>
 </layout>

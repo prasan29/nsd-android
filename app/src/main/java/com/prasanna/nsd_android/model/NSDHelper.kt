@@ -19,6 +19,8 @@ object NSDHelper : OnResultChanged {
 
     override fun onResult(nsdServiceInfo: NsdServiceInfo) {
         // Set LiveData which is bound to the View.
+        mResult.postValue(
+                "Published result:- \nService name: ${nsdServiceInfo.serviceName}\nService port: ${nsdServiceInfo.port}\nService type: ${nsdServiceInfo.serviceType}")
     }
 
     override fun onError() {
