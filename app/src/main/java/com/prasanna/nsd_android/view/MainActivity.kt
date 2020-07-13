@@ -23,5 +23,6 @@ class MainActivity : AppCompatActivity() {
     override fun onStop() {
         super.onStop()
         mBinding?.viewModel?.unRegister()
+        mBinding?.viewModel?.disconnectDiscovery()
     }
 }

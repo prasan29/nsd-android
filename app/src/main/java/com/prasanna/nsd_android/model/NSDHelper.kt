@@ -17,6 +17,14 @@ object NSDHelper : OnResultChanged {
         mNSDOperation.unRegister()
     }
 
+    fun discoverServices() {
+        mNSDOperation.discover()
+    }
+
+    fun stopDiscovery() {
+        mNSDOperation.stopDiscovery()
+    }
+
     override fun onResult(nsdServiceInfo: NsdServiceInfo) {
         // Set LiveData which is bound to the View.
         mResult.postValue(

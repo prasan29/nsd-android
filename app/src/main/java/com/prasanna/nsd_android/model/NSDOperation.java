@@ -16,6 +16,7 @@ public class NSDOperation {
 	private OnResultChanged mListener;
 	private NsdManager mNsdManager;
 	private RegistrationListener mRegistrationListener;
+	private DiscoverListener mDiscoverListener;
 
 	public NSDOperation(
 			OnResultChanged listener, Context context) {
@@ -23,6 +24,7 @@ public class NSDOperation {
 		mNsdManager =
 				(NsdManager) context.getSystemService(Context.NSD_SERVICE);
 		mRegistrationListener = new RegistrationListener(context);
+		mDiscoverListener = new DiscoverListener();
 
 		registerService(getServerSocketPort());
 	}
@@ -50,7 +52,12 @@ public class NSDOperation {
 	}
 
 	public void discover() {
+		mNsdManager.discoverServices(SERVICE_TYPE, NsdManager.PROTOCOL_DNS_SD,
+		                             mDiscoverListener);
+	}
 
+	public void stopDiscovery() {
+		mNsdManager.stopServiceDiscovery(mDiscoverListener);
 	}
 
 	public void unRegister() {

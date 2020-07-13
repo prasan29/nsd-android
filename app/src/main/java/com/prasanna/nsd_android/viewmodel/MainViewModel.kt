@@ -34,9 +34,14 @@ class MainViewModel(private val contextProvider: () -> Context,
         NSDHelper.unRegisterNSD()
     }
 
+    fun disconnectDiscovery() {
+        NSDHelper.stopDiscovery()
+    }
+
     fun onScanClicked() {
         // Scan API calls.
 //        result.value = "Scan"
+        NSDHelper.discoverServices()
     }
 
 }
