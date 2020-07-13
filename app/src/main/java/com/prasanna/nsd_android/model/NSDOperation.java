@@ -137,7 +137,7 @@ public class NSDOperation {
 		@Override
 		public void onServiceFound(NsdServiceInfo serviceInfo) {
 			Log.d(TAG, "Service: " + serviceInfo.toString());
-
+			mListener.onDiscoveryResult(serviceInfo);
 			if (serviceInfo.getServiceName().contains(SERVICE_NAME)) {
 				mNsdManager.resolveService(serviceInfo,
 				                           new NsdManager.ResolveListener() {

@@ -6,6 +6,8 @@ import androidx.lifecycle.MutableLiveData
 
 object NSDHelper : OnResultChanged {
     private var mResult: MutableLiveData<String> = MutableLiveData()
+    private var mScanningResult: MutableLiveData<String> = MutableLiveData()
+
     private lateinit var mNSDOperation: NSDOperation
 
     fun initialize(context: Context) {
@@ -21,7 +23,8 @@ object NSDHelper : OnResultChanged {
         mNSDOperation.unRegister()
     }
 
-    fun discoverServices() {
+    fun discoverServices(scanResult: MutableLiveData<String>) {
+        mScanningResult = scanResult
         mNSDOperation.discover()
     }
 
@@ -35,6 +38,11 @@ object NSDHelper : OnResultChanged {
                 "Published result:- \nService name: ${nsdServiceInfo.serviceName}\nService port: ${nsdServiceInfo.port}\nService type: ${nsdServiceInfo.serviceType}")
     }
 
+    override fun onDiscoveryResult(nsdServiceInfo: NsdServiceInfo) {
+        mScanningResult.postValue(
+                "Scanned result:- \nService name: ${nsdServiceInfo.serviceName}\nService port: ${nsdServiceInfo.port}\nService type: ${nsdServiceInfo.serviceType}")
+    }
+
     override fun onError() {
     }
 
@@ -42,5 +50,6 @@ object NSDHelper : OnResultChanged {
 
 interface OnResultChanged {
     fun onResult(nsdServiceInfo: NsdServiceInfo)
+    fun onDiscoveryResult(nsdServiceInfo: NsdServiceInfo)
     fun onError()
 }

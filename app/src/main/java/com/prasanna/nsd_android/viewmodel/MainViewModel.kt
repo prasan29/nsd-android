@@ -10,6 +10,8 @@ import com.prasanna.nsd_android.model.NSDHelper
 class MainViewModel(contextProvider: () -> Context,
                     lifeCycleProvider: () -> LifecycleOwner) : ViewModel() {
     val result = MutableLiveData<String>()
+    val scanResult = MutableLiveData<String>()
+
     val publishButtonValue = MutableLiveData<Boolean>()
 
     init {
@@ -43,7 +45,7 @@ class MainViewModel(contextProvider: () -> Context,
     fun onScanClicked() {
         // Scan API calls.
 //        result.value = "Scan"
-        NSDHelper.discoverServices()
+        NSDHelper.discoverServices(scanResult)
     }
 
 }
