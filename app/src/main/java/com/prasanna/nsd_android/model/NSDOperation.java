@@ -11,6 +11,9 @@ import java.net.InetAddress;
 import java.net.ServerSocket;
 import java.net.UnknownHostException;
 
+/**
+ * Operation class for NSD.
+ */
 public class NSDOperation {
 	private static final String TAG = "NSDOperation";
 	private static final String SERVICE_TYPE = "_http._tcp";
@@ -20,18 +23,26 @@ public class NSDOperation {
 	private RegistrationListener mRegistrationListener;
 	private DiscoverListener mDiscoverListener;
 
+	/**
+	 * Constructor for NSDOperation class.
+	 */
 	public NSDOperation(
 			OnResultChanged listener, Context context) {
 		mListener = listener;
 		mNsdManager =
 				(NsdManager) context.getSystemService(Context.NSD_SERVICE);
-		//		mDiscoverListener = new DiscoverListener();
 	}
 
+	/**
+	 * Method to initialise the registration.
+	 */
 	public void initiateProcess(Context context) {
 		registerService(getServerSocketPort(), context);
 	}
 
+	/**
+	 * Method to retrieve the available port number from the System.
+	 */
 	public int getServerSocketPort() {
 		try {
 			return new ServerSocket(8080).getLocalPort();
@@ -41,6 +52,9 @@ public class NSDOperation {
 		}
 	}
 
+	/**
+	 * Method to register for a service.
+	 */
 	public void registerService(int port, Context context) {
 		try {
 			NsdServiceInfo serviceInfo = new NsdServiceInfo();
@@ -59,20 +73,32 @@ public class NSDOperation {
 		}
 	}
 
+	/**
+	 * Method to discover services.
+	 */
 	public void discover() {
 		mDiscoverListener = new DiscoverListener();
 		mNsdManager.discoverServices(SERVICE_TYPE, NsdManager.PROTOCOL_DNS_SD,
 		                             mDiscoverListener);
 	}
 
+	/**
+	 * Method to terminate discovery.
+	 */
 	public void stopDiscovery() {
 		mNsdManager.stopServiceDiscovery(mDiscoverListener);
 	}
 
+	/**
+	 * Method to un-register a service.
+	 */
 	public void unRegister() {
 		mNsdManager.unregisterService(mRegistrationListener);
 	}
 
+	/**
+	 * Listener for handling the refistration operations.
+	 */
 	private class RegistrationListener
 			implements NsdManager.RegistrationListener {
 		private Context mContext;
@@ -90,8 +116,7 @@ public class NSDOperation {
 		@Override
 		public void onUnregistrationFailed(
 				NsdServiceInfo nsdServiceInfo, int i) {
-			Toast.makeText(mContext, "onUnregistrationFailed",
-			               Toast.LENGTH_SHORT).show();
+			Toast.makeText(mContext, "onUnregistrationFailed", Toast.LENGTH_SHORT).show();
 		}
 
 		@Override
@@ -109,6 +134,9 @@ public class NSDOperation {
 		}
 	}
 
+	/**
+	 * Listener for handling the discovery operations.
+	 */
 	private class DiscoverListener
 			implements NsdManager.DiscoveryListener {
 

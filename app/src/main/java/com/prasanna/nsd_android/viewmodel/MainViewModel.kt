@@ -7,9 +7,12 @@ import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModel
 import com.prasanna.nsd_android.model.NSDHelper
 
+/**
+ * ViewModel class which handles the View operations and data trasnfer between View and Model.
+ */
 class MainViewModel(contextProvider: () -> Context,
                     lifeCycleProvider: () -> LifecycleOwner) : ViewModel() {
-    val result = MutableLiveData<String>()
+    private val result = MutableLiveData<String>()
     val scanResult = MutableLiveData<String>()
 
     val publishButtonValue = MutableLiveData<Boolean>()
@@ -24,6 +27,9 @@ class MainViewModel(contextProvider: () -> Context,
         NSDHelper.initialize(contextProvider())
     }
 
+    /**
+     * Data binding method for "Publish" button click.
+     */
     fun onPublishClicked() {
         // Publish API call.
         if (publishButtonValue.value != true) {
@@ -34,17 +40,24 @@ class MainViewModel(contextProvider: () -> Context,
         }
     }
 
+    /**
+     * Method to un-register the NSD service.
+     */
     fun unRegister() {
         NSDHelper.unRegisterNSD()
     }
 
+    /**
+     * Method to disconnect the discovery.
+     */
     fun disconnectDiscovery() {
         NSDHelper.stopDiscovery()
     }
 
+    /**
+     * Data binding method for "Scan" button click.
+     */
     fun onScanClicked() {
-        // Scan API calls.
-//        result.value = "Scan"
         NSDHelper.discoverServices(scanResult)
     }
 
