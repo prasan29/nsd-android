@@ -7,11 +7,13 @@ import android.util.Log;
 import android.widget.Toast;
 
 import java.io.IOException;
+import java.net.InetAddress;
 import java.net.ServerSocket;
+import java.net.UnknownHostException;
 
 public class NSDOperation {
 	private static final String TAG = "NSDOperation";
-	private static final String SERVICE_TYPE = "_http._tcp.";
+	private static final String SERVICE_TYPE = "_http._tcp";
 	private static final String SERVICE_NAME = "MyService001";
 	private OnResultChanged mListener;
 	private NsdManager mNsdManager;
@@ -24,34 +26,41 @@ public class NSDOperation {
 		mNsdManager =
 				(NsdManager) context.getSystemService(Context.NSD_SERVICE);
 		mRegistrationListener = new RegistrationListener(context);
-		mDiscoverListener = new DiscoverListener();
+		//		mDiscoverListener = new DiscoverListener();
+	}
 
+	public void initiateProcess() {
 		registerService(getServerSocketPort());
 	}
 
 	public int getServerSocketPort() {
 		try {
-			return new ServerSocket(0).getLocalPort();
+			return new ServerSocket(8080).getLocalPort();
 		} catch (IOException e) {
 			Log.e(TAG, "Exception while getting port. \n" + e);
-			return -1;
+			return 80;
 		}
 	}
 
 	public void registerService(int port) {
-		NsdServiceInfo serviceInfo = new NsdServiceInfo();
-		serviceInfo.setServiceName(SERVICE_NAME);
-		//		serviceInfo.setHost();
-		serviceInfo.setServiceType(SERVICE_TYPE);
-		serviceInfo.setPort(port);
+		try {
+			NsdServiceInfo serviceInfo = new NsdServiceInfo();
+			serviceInfo.setServiceName(SERVICE_NAME);
+			serviceInfo.setHost(InetAddress.getByName("10.0.0.2"));
+			serviceInfo.setServiceType(SERVICE_TYPE);
+			serviceInfo.setPort(port);
 
-		Log.e(TAG, serviceInfo.toString());
+			Log.e(TAG, serviceInfo.toString());
 
-		mNsdManager.registerService(serviceInfo, NsdManager.PROTOCOL_DNS_SD,
-		                            mRegistrationListener);
+			mNsdManager.registerService(serviceInfo, NsdManager.PROTOCOL_DNS_SD,
+			                            mRegistrationListener);
+		} catch (UnknownHostException e) {
+			Log.e(TAG, "UnknownHostException!", e);
+		}
 	}
 
 	public void discover() {
+		mDiscoverListener = new DiscoverListener();
 		mNsdManager.discoverServices(SERVICE_TYPE, NsdManager.PROTOCOL_DNS_SD,
 		                             mDiscoverListener);
 	}
@@ -128,6 +137,7 @@ public class NSDOperation {
 		@Override
 		public void onServiceFound(NsdServiceInfo serviceInfo) {
 			Log.d(TAG, "Service: " + serviceInfo.toString());
+
 			if (serviceInfo.getServiceName().contains(SERVICE_NAME)) {
 				mNsdManager.resolveService(serviceInfo,
 				                           new NsdManager.ResolveListener() {

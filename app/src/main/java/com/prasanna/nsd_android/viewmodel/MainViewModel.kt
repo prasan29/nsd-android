@@ -7,8 +7,8 @@ import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModel
 import com.prasanna.nsd_android.model.NSDHelper
 
-class MainViewModel(private val contextProvider: () -> Context,
-                    private val lifeCycleProvider: () -> LifecycleOwner) : ViewModel() {
+class MainViewModel(contextProvider: () -> Context,
+                    lifeCycleProvider: () -> LifecycleOwner) : ViewModel() {
     val result = MutableLiveData<String>()
     val publishButtonValue = MutableLiveData<Boolean>()
 
@@ -18,6 +18,8 @@ class MainViewModel(private val contextProvider: () -> Context,
         result.observe(lifeCycleProvider(), Observer {
             publishButtonValue.value = false
         })
+
+        NSDHelper.initialize(contextProvider())
     }
 
     fun onPublishClicked() {
@@ -26,7 +28,7 @@ class MainViewModel(private val contextProvider: () -> Context,
             NSDHelper.unRegisterNSD()
             publishButtonValue.value = true
         } else {
-            NSDHelper.initiateNSD(result, contextProvider())
+            NSDHelper.initiateNSD(result)
         }
     }
 

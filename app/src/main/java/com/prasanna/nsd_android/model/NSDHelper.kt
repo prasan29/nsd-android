@@ -8,9 +8,13 @@ object NSDHelper : OnResultChanged {
     private var mResult: MutableLiveData<String> = MutableLiveData()
     private lateinit var mNSDOperation: NSDOperation
 
-    fun initiateNSD(result: MutableLiveData<String>, context: Context) {
-        mResult = result
+    fun initialize(context: Context) {
         mNSDOperation = NSDOperation(this, context)
+    }
+
+    fun initiateNSD(result: MutableLiveData<String>) {
+        mResult = result
+        mNSDOperation.initiateProcess()
     }
 
     fun unRegisterNSD() {
