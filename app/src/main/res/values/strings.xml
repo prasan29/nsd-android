@@ -1,0 +1,5 @@
+<resources>
+    <string name="app_name">nsd-android</string>
+    <string name="publish">Publish</string>
+    <string name="scan">Scan</string>
+</resources>
