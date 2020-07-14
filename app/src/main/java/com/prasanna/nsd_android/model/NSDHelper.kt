@@ -19,6 +19,7 @@ object NSDHelper : OnResultChanged {
      */
     fun initialize(context: Context) {
         mNSDOperation = NSDOperation(this, context)
+        contextProvider = { context }
     }
 
     /**
@@ -65,7 +66,7 @@ object NSDHelper : OnResultChanged {
      */
     override fun onDiscoveryResult(nsdServiceInfo: NsdServiceInfo) {
         mScanningResult.postValue(
-                "Scanned result:- \nService name: ${nsdServiceInfo.serviceName}\nService port: ${nsdServiceInfo.port}\nService type: ${nsdServiceInfo.serviceType}")
+                "Scanned result:- \nService name: ${nsdServiceInfo.serviceName}\nService IP: ${nsdServiceInfo.host}\nService port: ${nsdServiceInfo.port}\nService type: ${nsdServiceInfo.serviceType}")
     }
 
     /**
