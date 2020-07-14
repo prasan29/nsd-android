@@ -19,14 +19,14 @@ import java.net.UnknownHostException;
  */
 public class NSDOperation {
 	private static final String TAG = "NSDOperation";
-	private static final String SERVICE_TYPE = "_http._tcp";
+	private static final String SERVICE_TYPE = "_http._tcp.";
 	private static final String SERVICE_NAME = "MyService001";
 	private ServerSocket mDiscoverableServerSocket;
 	private OnResultChanged mListener;
 	private NsdManager mNsdManager;
 	private RegistrationListener mRegistrationListener;
 	private DiscoverListener mDiscoverListener;
-	private SocketServerConnection mSocketServerConnection;
+	private SocketConnection mSocketConnection;
 
 	/**
 	 * Constructor for NSDOperation class.
@@ -37,8 +37,8 @@ public class NSDOperation {
 		mNsdManager =
 				(NsdManager) context.getSystemService(Context.NSD_SERVICE);
 
-		mSocketServerConnection = new SocketServerConnection();
-		mSocketServerConnection.openConnection();
+		mSocketConnection = new SocketConnection();
+		mSocketConnection.openConnection();
 	}
 
 	/**
@@ -52,7 +52,7 @@ public class NSDOperation {
 	 * Method to retrieve the available port number from the System.
 	 */
 	public int getServerSocketPort() {
-		return mSocketServerConnection.getSelectedPort();
+		return mSocketConnection.getSelectedPort();
 	}
 
 	/**
@@ -107,8 +107,8 @@ public class NSDOperation {
 	public void shutdown() {
 		try {
 			mNsdManager.unregisterService(mRegistrationListener);
-			if (mSocketServerConnection != null) {
-				mSocketServerConnection.release();
+			if (mSocketConnection != null) {
+				mSocketConnection.release();
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -146,7 +146,8 @@ public class NSDOperation {
 		@Override
 		public void onUnregistrationFailed(
 				NsdServiceInfo nsdServiceInfo, int i) {
-			Toast.makeText(mContext, "onUnregistrationFailed", Toast.LENGTH_SHORT).show();
+			Toast.makeText(mContext, "onUnregistrationFailed",
+			               Toast.LENGTH_SHORT).show();
 		}
 
 		@Override
@@ -219,15 +220,14 @@ public class NSDOperation {
 	}
 
 	/**
-	 * This class has the functionality required to start
-	 * and use the ServerSocket...
+	 * Class to create a Socket and open a port on 8080.
 	 */
-	private class SocketServerConnection {
+	private class SocketConnection {
 		private int mSelectedPort;
 		private DataOutputStream mSocketOutput;
 		private DataInputStream mSocketInput;
 
-		public SocketServerConnection() {
+		public SocketConnection() {
 			try {
 				mDiscoverableServerSocket = new ServerSocket(8080);
 				mSelectedPort = mDiscoverableServerSocket.getLocalPort();
@@ -244,28 +244,20 @@ public class NSDOperation {
 		}
 
 		/**
-		 * Start a Server Socket and get it ready
-		 * to wait for a connection...
+		 * Method to start the server socket and open the connection.
 		 */
 		public void openConnection() {
 			new Thread(new Runnable() {
 				@Override
 				public void run() {
 					try {
-						//Assign the socket that will be used for communication and let the thread die...
-						Log.e("TrackingFlow", "Waiting for connection...");
 						Socket socket = mDiscoverableServerSocket.accept();
-						Log.e("TrackingFlow", "Connection found...");
+
 						mSocketOutput =
 								new DataOutputStream(socket.getOutputStream());
 						mSocketInput =
 								new DataInputStream(socket.getInputStream());
-
-						//						listenForMessages();
-
-						//At this point you can start using the socket
-						//get outputStream and inputStream
-					} catch (IOException e) {
+					} catch (Exception e) {
 						Log.e(TAG, "Error creating ServerSocket: ", e);
 						e.printStackTrace();
 					} finally {
@@ -284,42 +276,14 @@ public class NSDOperation {
 							}
 						}
 					}
-					//Reopen the connection to wait for another message...
 					openConnection();
 				}
 			}).start();
 		}
 
-		//		public void listenForMessages() {
-		//			if (!mIsReady || mSocketInput == null) {
-		//				return;
-		//			}
-		//			int bufferSize = 1024;
-		//			byte[] buffer = new byte[bufferSize];
-		//			StringBuilder sb = new StringBuilder();
-		//			int length = Integer.MAX_VALUE;
-		//
-		//			try {
-		//				while (length >= bufferSize) {
-		//					length = mSocketInput.read(buffer);
-		//					sb.append(new String(buffer, 0, length));
-		//				}
-		//				final String receivedMessage = sb.toString();
-		//				mSocketOutput.write(("Echo: " + receivedMessage).getBytes());
-		//				mSocketOutput.flush();
-		//				new Handler(mContext.getMainLooper()).post(new Runnable() {
-		//					@Override
-		//					public void run() {
-		//						Toast.makeText(mContext,
-		//						               "Message received: " + receivedMessage,
-		//						               Toast.LENGTH_LONG).show();
-		//					}
-		//				});
-		//			} catch (IOException e) {
-		//				e.printStackTrace();
-		//			}
-		//		}
-
+		/**
+		 * Method to release the resources of Socket I/O.
+		 */
 		public void release() {
 			if (mSocketOutput != null) {
 				try {
